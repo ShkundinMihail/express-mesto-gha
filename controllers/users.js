@@ -19,7 +19,7 @@ const getUser = (req, res) => {
     })
     .catch((err) => {
       if (err.message === 'not_found') {
-        res.status(404).send({ message: 'user not found, error 404' });
+        res.status(400).send({ message: 'user not found, error 404' });
       } else {
         res.status(500).send({ message: `smth went wrong 500${err}` });
       }
@@ -47,7 +47,7 @@ const editUserProfile = (req, res) => {
   const { _id: userId } = req.user;
   // console.log(name, about);
   UserSchema.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
-    .then((user) => res.status(201).send({ data: user }))
+    .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       // console.log(`49_${err.name}`);
       if (err.name === 'ValidationError') {
@@ -64,7 +64,7 @@ const editUserAvatar = (req, res) => {
   const { avatar } = req.body;
   const { _id: userId } = req.user;
   UserSchema.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
-    .then((user) => res.status(201).send({ data: user }))
+    .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         const message = Object.values(err.errors).map((error) => error.message).join(';');
