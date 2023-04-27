@@ -12,7 +12,7 @@ const getUser = (req, res) => {
   const id = req.params;
   UserSchema.findById(id)
     .then((user) => {
-      res.status(200).send({ data: user });
+      if (user) { res.status(200).send({ data: user }); }
     })
     .catch((err) => {
       // if (err.name === 'CastError') {

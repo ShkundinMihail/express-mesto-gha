@@ -41,7 +41,7 @@ const likeCard = (req, res) => {
 };
 const dislikeCard = (req, res) => {
   cardSchema.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
-    .then((card) => { res.status(201).send({ data: card }); })
+    .then((card) => { res.status(200).send({ data: card }); })
     .catch((err) => processingError(res, err));
 };
 module.exports = {
