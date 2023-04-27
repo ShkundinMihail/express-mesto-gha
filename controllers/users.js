@@ -2,6 +2,17 @@
 /* eslint-disable max-len */
 const UserSchema = require('../models/User');
 
+const processingError = (res, err) => {
+  if (err.name === 'CastError') {
+    res.status(400).send({ message: 'incorrect id, error 400' });
+  } else if (err.name === 'ValidationError') {
+    const message = Object.values(err.errors).map((error) => error.message).join(';');
+    res.status(400).send({ message });
+  } else {
+    res.status(500).send({ message: `smth went wrong 500${err}` });
+  }
+};
+
 const getUsers = (req, res) => {
   UserSchema.find().then((users) => {
     res.status(200).send({ data: users });
@@ -18,16 +29,7 @@ const getUser = (req, res) => {
         res.status(404).send({ message: 'user not found, error 404' });
       }
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(400).send({ message: 'incorrect id, error 400' });
-      } else if (err.name === 'ValidationError') {
-        const message = Object.values(err.errors).map((error) => error.message).join(';');
-        res.status(400).send({ message });
-      } else {
-        res.status(500).send({ message: `smth went wrong 500${err}` });
-      }
-    });
+    .catch((err) => { processingError(res, err); });
 };
 
 const createUser = (req, res) => {
@@ -37,48 +39,33 @@ const createUser = (req, res) => {
     .then((user) => {
       res.status(201).send({ data: user });
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        const message = Object.values(err.errors).map((error) => error.message).join(';');
-        res.status(400).send({ message });
-      } else {
-        res.status(500).send({ message: 'smth went wrong 500' });
-      }
-    });
+    .catch((err) => { processingError(res, err); });
 };
 const editUserProfile = (req, res) => {
   const { name, about } = req.body;
   const { _id: userId } = req.user;
-  // console.log(name, about);
   UserSchema.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
-    .then((user) => res.status(200).send({ data: user }))
-    .catch((err) => {
-      // console.log(`49_${err.name}`);
-      if (err.name === 'ValidationError') {
-        const message = Object.values(err.errors).map((error) => error.message).join(';');
-        res.status(400).send({ message });
-      } else if (err.message === 'not_found') {
-        res.status(404).send({ message: 'user not found, error 404' });
+    .then((user) => {
+      if (user) {
+        res.status(200).send({ data: user });
       } else {
-        res.status(500).send({ message: `smth went wrong 500${err}` });
+        res.status(404).send({ message: 'user not found, error 404' });
       }
-    });
+    })
+    .catch((err) => { processingError(res, err); });
 };
 const editUserAvatar = (req, res) => {
   const { avatar } = req.body;
   const { _id: userId } = req.user;
   UserSchema.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
-    .then((user) => res.status(200).send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        const message = Object.values(err.errors).map((error) => error.message).join(';');
-        res.status(400).send({ message });
-      } else if (err.message === 'not_found') {
-        res.status(404).send({ message: 'user not found, error 404' });
+    .then((user) => {
+      if (user) {
+        res.status(200).send({ data: user });
       } else {
-        res.status(500).send({ message: `smth went wrong 500${err}` });
+        res.status(404).send({ message: 'user not found, error 404' });
       }
-    });
+    })
+    .catch((err) => { processingError(res, err); });
 };
 module.exports = {
   getUsers,
