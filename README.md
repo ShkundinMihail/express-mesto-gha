@@ -1,6 +1,13 @@
 [![Tests](../../actions/workflows/tests-13-sprint.yml/badge.svg)](../../actions/workflows/tests-13-sprint.yml) [![Tests](../../actions/workflows/tests-14-sprint.yml/badge.svg)](../../actions/workflows/tests-14-sprint.yml)
 # Проект Mesto фронтенд + бэкенд
 
+Первые шаги в попытке освоить бэкэнд... Далось честно говоря с трудом... Данный проект является бекэнд частью в проекте "Mesto" Собственно что сделал:
+1. Создана Инфраструктура проекта
+2. Настроен editorconfig
+3. Настроен линтер
+4. Подключена база данных Mongodb
+5. Созданы схемы и модели
+6. Созданы контроллеры и роуты для пользователей и карточек
 
 ## Директории
 
