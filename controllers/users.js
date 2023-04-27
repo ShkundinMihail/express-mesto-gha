@@ -18,7 +18,7 @@ const getUser = (req, res) => {
       if (user) {
         res.status(200).send({ data: user });
       } else {
-        res.status(400).send({ message: 'user not found, error 400' });
+        res.status(500).send({ message: 'user not found, error 500' });
       }
     })
     .catch((err) => {
