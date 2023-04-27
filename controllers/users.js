@@ -20,7 +20,7 @@ const getUser = (req, res) => {
       // } else {
       //   res.status(500).send({ message: `smth went wrong 500${err}` });
       // }
-      if (err.name === 'ValidationError') {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
         const message = Object.values(err.errors).map((error) => error.message).join(';');
         res.status(400).send({ message });
       } else if (err.message === 'not_found') {
