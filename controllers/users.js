@@ -11,9 +11,6 @@ const getUsers = (req, res) => {
 const getUser = (req, res) => {
   const id = req.params;
   UserSchema.findById(id)
-    .orFail(() => {
-      throw new Error('not_found');
-    })
     .then((user) => {
       if (user) {
         res.status(200).send({ data: user });
@@ -22,8 +19,8 @@ const getUser = (req, res) => {
       }
     })
     .catch((err) => {
-      if (err.message === 'not_found') {
-        res.status(400).send({ message: 'user not found, error 400' });
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'incorrect id, error 400' });
       } else {
         res.status(500).send({ message: `smth went wrong 500${err}` });
       }
