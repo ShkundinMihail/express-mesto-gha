@@ -2,6 +2,13 @@
 /* eslint-disable max-len */
 const UserSchema = require('../models/User');
 
+const processingGoodResponse = (user, res) => {
+  if (user) {
+    res.status(200).send({ data: user });
+  } else {
+    res.status(404).send({ message: 'card not found, error 404' });
+  }
+};
 const processingError = (res, err) => {
   if (err.name === 'CastError') {
     res.status(400).send({ message: 'incorrect id, error 400' });
@@ -22,13 +29,7 @@ const getUsers = (req, res) => {
 const getUser = (req, res) => {
   const id = req.params;
   UserSchema.findById(id)
-    .then((user) => {
-      if (user) {
-        res.status(200).send({ data: user });
-      } else {
-        res.status(404).send({ message: 'user not found, error 404' });
-      }
-    })
+    .then((user) => { processingGoodResponse(user, res); })
     .catch((err) => { processingError(res, err); });
 };
 
@@ -45,26 +46,14 @@ const editUserProfile = (req, res) => {
   const { name, about } = req.body;
   const { _id: userId } = req.user;
   UserSchema.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
-    .then((user) => {
-      if (user) {
-        res.status(200).send({ data: user });
-      } else {
-        res.status(404).send({ message: 'user not found, error 404' });
-      }
-    })
+    .then((user) => { processingGoodResponse(user, res); })
     .catch((err) => { processingError(res, err); });
 };
 const editUserAvatar = (req, res) => {
   const { avatar } = req.body;
   const { _id: userId } = req.user;
   UserSchema.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
-    .then((user) => {
-      if (user) {
-        res.status(200).send({ data: user });
-      } else {
-        res.status(404).send({ message: 'user not found, error 404' });
-      }
-    })
+    .then((user) => { processingGoodResponse(user, res); })
     .catch((err) => { processingError(res, err); });
 };
 module.exports = {
