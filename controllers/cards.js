@@ -1,7 +1,9 @@
 const cardSchema = require('../models/Card');
 
 const processingError = (res, err) => {
-  if (err.name === 'ValidationError') {
+  if (err.name === 'CastError') {
+    res.status(400).send({ message: 'incorrect id, error 400' });
+  } else if (err.name === 'ValidationError') {
     const message = Object.values(err.errors).map((error) => error.message).join(';');
     res.status(400).send({ message });
   } else if (err.message === 'not_found') {

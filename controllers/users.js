@@ -20,18 +20,19 @@ const getUser = (req, res) => {
       // } else {
       //   res.status(500).send({ message: `smth went wrong 500${err}` });
       // }
-      if (err.name === 'ValidationError') {
-        const message = Object.values(err.errors).map((error) => error.message).join(';');
-        res.status(400).send({ message });
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'incorrect id, error 400' });
       } else if (err.message === 'not_found') {
         res.status(404).send({ message: 'user not found, error 404' });
-      } else if (err.name === 'CastError') {
-        res.status(400).send({ message: 'incorrect id, error 400' });
+      } else if (err.name === 'ValidationError') {
+        const message = Object.values(err.errors).map((error) => error.message).join(';');
+        res.status(400).send({ message });
       } else {
         res.status(500).send({ message: `smth went wrong 500${err}` });
       }
     });
 };
+
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
