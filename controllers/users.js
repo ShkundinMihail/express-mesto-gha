@@ -12,15 +12,19 @@ const getUser = (req, res) => {
   const id = req.params;
   UserSchema.findById(id)
     .then((user) => {
-      if (user) {
-        res.status(200).send({ data: user });
-      } else {
-        res.status(404).send({ message: 'user not found, error 404' });
-      }
+      res.status(200).send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(400).send({ message: 'incorrect id, error 400' });
+      // if (err.name === 'CastError') {
+      //   res.status(400).send({ message: 'incorrect id, error 400' });
+      // } else {
+      //   res.status(500).send({ message: `smth went wrong 500${err}` });
+      // }
+      if (err.name === 'ValidationError') {
+        const message = Object.values(err.errors).map((error) => error.message).join(';');
+        res.status(400).send({ message });
+      } else if (err.message === 'not_found') {
+        res.status(404).send({ message: 'user not found, error 404' });
       } else {
         res.status(500).send({ message: `smth went wrong 500${err}` });
       }
@@ -34,7 +38,6 @@ const createUser = (req, res) => {
       res.status(201).send({ data: user });
     })
     .catch((err) => {
-      //  console.log(err);
       if (err.name === 'ValidationError') {
         const message = Object.values(err.errors).map((error) => error.message).join(';');
         res.status(400).send({ message });
