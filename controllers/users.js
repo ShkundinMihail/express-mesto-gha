@@ -18,12 +18,12 @@ const getUser = (req, res) => {
       if (user) {
         res.status(200).send({ data: user });
       } else {
-        res.status(500).send({ message: 'user not found, error 500' });
+        res.status(404).send({ message: 'user not found, error 404' });
       }
     })
     .catch((err) => {
       if (err.message === 'not_found') {
-        res.status(404).send({ message: 'user not found, error 404' });
+        res.status(400).send({ message: 'user not found, error 400' });
       } else {
         res.status(500).send({ message: `smth went wrong 500${err}` });
       }
