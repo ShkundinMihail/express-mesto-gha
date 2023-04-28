@@ -16,17 +16,21 @@ const cardSchema = new Schema(
     },
     owner: {
       type: Schema.Types.ObjectId,
-      ref: 'ownerCard',
+      ref: 'user',
       required: [true, 'не заполнено поле owner'],
     },
     likes: {
       type: [
         {
           type: Schema.Types.ObjectId,
-          ref: 'users',
+          ref: 'user',
         },
       ],
       default: [],
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
     },
   },
 );

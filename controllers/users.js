@@ -1,28 +1,9 @@
-/* eslint-disable no-sequences */
-/* eslint-disable max-len */
 const UserSchema = require('../models/User');
-
-const processingGoodResponse = (user, res) => {
-  if (user) {
-    res.status(200).send({ data: user });
-  } else {
-    res.status(404).send({ message: 'card not found, error 404' });
-  }
-};
-const processingError = (res, err) => {
-  if (err.name === 'CastError') {
-    res.status(400).send({ message: 'incorrect id, error 400' });
-  } else if (err.name === 'ValidationError') {
-    const message = Object.values(err.errors).map((error) => error.message).join(';');
-    res.status(400).send({ message });
-  } else {
-    res.status(500).send({ message: `smth went wrong 500${err}` });
-  }
-};
+const { processingError, processingGoodResponse } = require('../handlers/responseHandlers');
 
 const getUsers = (req, res) => {
   UserSchema.find().then((users) => {
-    res.status(200).send({ data: users });
+    res.send({ data: users });
   })
     .catch(() => res.status(500).send({ message: 'smth went wrong 500 ' }));
 };
