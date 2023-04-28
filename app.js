@@ -8,6 +8,7 @@ const { PORT = 3000 } = process.env;
 const mongoose = require('mongoose');
 const userRoutes = require('./routes/users');
 const cardRoutes = require('./routes/cards');
+const { notFound } = require('./handlers/errorCodes');
 
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
   .then(() => { console.log('database ok'); })
@@ -24,7 +25,7 @@ app.use(express.json());
 app.use('/users', userRoutes);
 app.use('/cards', cardRoutes);
 app.use((req, res, next) => {
-  next(res.status(404).send({ message: 'URL not found' }));
+  next(res.status(notFound).send({ message: 'URL not found' }));
 });
 // eslint-disable-next-line no-console
 app.listen(PORT, () => { console.log(`start server:${PORT}`); });
