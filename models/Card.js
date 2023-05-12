@@ -6,18 +6,24 @@ const cardSchema = new Schema(
   {
     name: {
       type: String,
-      minlength: [2, 'name не может содержать меньше 2 символов'],
-      maxlength: [30, 'name не может содержать больше 30 символов'],
-      required: [true, 'заполните поле name'],
+      required: true,
+      validate: {
+        validator: ({ length }) => length >= 2 && length <= 30,
+        message: 'name must be between 2 and 30 characters',
+      },
     },
     link: {
       type: String,
-      required: [true, 'заполните поле link'],
+      required: true,
+      validate: {
+        validator: (url) => /https?:\/\/(?:[-\w]+\.)?([-\w]+)\.\w+(?:\.\w+)?\/?.*/i.test(url),
+        message: 'enter URL',
+      },
     },
     owner: {
       type: Schema.Types.ObjectId,
       ref: 'user',
-      required: [true, 'не заполнено поле owner'],
+      required: true,
     },
     likes: {
       type: [

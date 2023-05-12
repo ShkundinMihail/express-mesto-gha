@@ -1,15 +1,19 @@
-/* eslint-disable object-curly-spacing */
-/* eslint-disable object-curly-newline */
 const express = require('express');
 
 const userRoutes = express.Router();
-const { getUsers, getUser, createUser, editUserProfile, editUserAvatar} = require('../controllers/users');
+const {
+  getUsers,
+  getUserID,
+  getUserInfo,
+  editUserProfile,
+  editUserAvatar,
+} = require('../controllers/users');
 
 userRoutes.get('/', getUsers);
 
-userRoutes.get('/:_id', getUser);
+userRoutes.get('/me', getUserInfo);
 
-userRoutes.post('/', createUser);
+userRoutes.get('/:_id', getUserID);
 
 userRoutes.patch('/me', editUserProfile);
 

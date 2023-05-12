@@ -1,46 +1,150 @@
+const {
+  ValidationError,
+  DocumentNotFoundError,
+  CastError,
+} = require('mongoose').Error;
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const UserSchema = require('../models/User');
-const { processingError, processingGoodResponse } = require('../handlers/responseHandlers');
+const IncorrectValue = require('../errors/IncorrectValue400');
+const NotFound = require('../errors/NotFound404');
+const Conflict = require('../errors/Conflict409');
+const { statusCreated } = require('../errors/errorCodes');
 
-const getUsers = (req, res) => {
+const getUsers = (req, res, next) => {
   UserSchema.find().then((users) => {
     res.send({ data: users });
   })
-    .catch(() => res.status(500).send({ message: 'smth went wrong 500 ' }));
+    .catch(next);
 };
-const getUser = (req, res) => {
+const getUserID = (req, res, next) => {
   const id = req.params;
   UserSchema.findById(id)
-    .then((user) => { processingGoodResponse(user, res); })
-    .catch((err) => { processingError(res, err); });
-};
-
-const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-
-  UserSchema.create({ name, about, avatar })
     .then((user) => {
-      res.status(201).send({ data: user });
+      if (!user) {
+        throw new NotFound('user not found');
+      } else {
+        res.send(user);
+      }
     })
-    .catch((err) => { processingError(res, err); });
+    .catch((err) => {
+      if (err instanceof CastError) {
+        next(new IncorrectValue('incorrect value'));
+      } else {
+        next(err);
+      }
+    });
 };
-const editUserProfile = (req, res) => {
+
+const getUserInfo = (req, res, next) => {
+  const userId = req.user._id;
+  UserSchema.findById(userId)
+    .then((user) => res.send(user))
+    .catch(next);
+};
+
+const editUserProfile = (req, res, next) => {
   const { name, about } = req.body;
   const { _id: userId } = req.user;
+  if (!name || !about) {
+    throw new IncorrectValue('enter name or about');
+  }
   UserSchema.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
-    .then((user) => { processingGoodResponse(user, res); })
-    .catch((err) => { processingError(res, err); });
+    .then((user) => {
+      if (!user) {
+        throw new NotFound('user not found');
+      } else {
+        res.send(user);
+      }
+    })
+    .catch((err) => {
+      if (err instanceof DocumentNotFoundError) {
+        next(new NotFound('user not found'));
+        return;
+      }
+      if (err instanceof ValidationError) {
+        next(new IncorrectValue('incorrect value'));
+      } else {
+        next(err);
+      }
+    });
 };
-const editUserAvatar = (req, res) => {
+
+const editUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
   const { _id: userId } = req.user;
   UserSchema.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
-    .then((user) => { processingGoodResponse(user, res); })
-    .catch((err) => { processingError(res, err); });
+    .then((user) => {
+      if (!user) {
+        throw new NotFound('user not found');
+      } else {
+        res.send(user);
+      }
+    })
+    .catch((err) => {
+      if (err instanceof DocumentNotFoundError) {
+        next(new NotFound('user not found'));
+        return;
+      }
+      if (err instanceof ValidationError) {
+        next(new IncorrectValue('incorrect value'));
+      } else {
+        next(err);
+      }
+    });
+};
+const createUser = (req, res, next) => {
+  if (!req.body) {
+    throw new IncorrectValue('bad request');
+  }
+  const {
+    email, password, name, about, avatar,
+  } = req.body;
+  if (!email || !password) {
+    throw new IncorrectValue('enter email or password');
+  }
+  bcrypt.hash(password, 10)
+    .then((hash) => UserSchema.create({
+      email,
+      password: hash,
+      name,
+      about,
+      avatar,
+    }))
+    .then((user) => res.status(statusCreated).send(user))
+    .catch((err) => {
+      if (err.code === 11000) {
+        next(new Conflict('user already exists'));
+        return;
+      }
+      if (err instanceof ValidationError) {
+        next(new IncorrectValue('incorrect value'));
+      } else {
+        next(err);
+      }
+    });
+};
+const loginUser = (req, res, next) => {
+  if (!req.body) {
+    throw new IncorrectValue('incorrect value');
+  }
+  const { email, password } = req.body;
+  if (!email || !password) {
+    throw new IncorrectValue('enter email or password');
+  }
+  return UserSchema.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      res.cookie('jwt', token, { maxAge: 3600000, httpOnly: true }).send({ token });
+    })
+    .catch(next);
 };
 module.exports = {
   getUsers,
-  getUser,
+  getUserID,
+  getUserInfo,
   createUser,
   editUserProfile,
   editUserAvatar,
+  loginUser,
 };
