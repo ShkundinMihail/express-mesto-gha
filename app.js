@@ -3,7 +3,7 @@ const express = require('express');
 
 const app = express();
 // const {PORT = (3000+Math.floor(Math.random()*100))} = process.env;
-const { PORT = 3005 } = process.env;
+const { PORT = 3000 } = process.env;
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const userRoutes = require('./routes/users');
