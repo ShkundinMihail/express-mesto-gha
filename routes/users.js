@@ -16,9 +16,9 @@ const {
 
 userRoutes.get('/', getUsers);
 
-userRoutes.get('/me', getUserIdValidation, getUserInfo);
+userRoutes.get('/me', getUserInfo);
 
-userRoutes.get('/:_id', getUserID);
+userRoutes.get('/:_id', getUserIdValidation, getUserID);
 
 userRoutes.patch('/me', editUserProfileValidation, editUserProfile);
 

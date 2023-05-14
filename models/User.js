@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
-// const { Schema } = mongoose;
+const NoAuthorizedError = require('../errors/NoAuthorized401');
 
 const userSchema = new mongoose.Schema(
   {
@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema(
     },
     about: {
       type: String,
-      default: 'Исследователь океана',
+      default: 'Исследователь',
       validate: {
         validator: ({ length }) => length >= 2 && length <= 30,
         message: 'about must be between 2 and 30 characters',
@@ -54,13 +54,13 @@ userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        return Promise.reject(new Error('incorrect email or password'));
+        return Promise.reject(new NoAuthorizedError('incorrect email or password'));
       }
 
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            return Promise.reject(new Error('incorrect email or password'));
+            return Promise.reject(new NoAuthorizedError('incorrect email or password'));
           }
           return user;
         });

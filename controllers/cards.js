@@ -37,8 +37,8 @@ const deleteCard = (req, res, next) => {
         next(new Forbidden('no right to delete card'));
       }
       return cardSchema.findByIdAndRemove(id)
-        .then((cardDel) => {
-          res.send(cardDel);
+        .then(() => {
+          res.send(card);
         })
         .catch((err) => next(err));
     })

@@ -131,13 +131,7 @@ const createUser = (req, res, next) => {
     });
 };
 const loginUser = (req, res, next) => {
-  if (!req.body) {
-    throw new IncorrectValue('incorrect value');
-  }
   const { email, password } = req.body;
-  if (!email || !password) {
-    throw new IncorrectValue('enter email or password');
-  }
   return UserSchema.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
