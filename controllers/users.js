@@ -18,8 +18,8 @@ const getUsers = (req, res, next) => {
     .catch(next);
 };
 const getUserID = (req, res, next) => {
-  const id = req.params;
-  UserSchema.findById(id)
+  const { _id: userId } = req.params;
+  UserSchema.findById(userId)
     .then((user) => {
       if (!user) {
         throw new NotFound('user not found');

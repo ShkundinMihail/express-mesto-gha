@@ -26,9 +26,9 @@ const createCard = (req, res, next) => {
     });
 };
 const deleteCard = (req, res, next) => {
-  const { id } = req.params;
+  const { cardId } = req.params;
   const userId = String(req.user._id);
-  cardSchema.findById(id)
+  cardSchema.findById(cardId)
     .then((card) => {
       if (!card) {
         next(new NotFound('not found card'));
@@ -36,7 +36,7 @@ const deleteCard = (req, res, next) => {
       if (userId !== card.owner.toString()) {
         next(new Forbidden('no right to delete card'));
       }
-      return cardSchema.findByIdAndRemove(id)
+      return cardSchema.findByIdAndRemove(cardId)
         .then(() => {
           res.send(card);
         })

@@ -15,7 +15,7 @@ cardRoutes.get('/', getCards);
 
 cardRoutes.post('/', createCardValidation, createCard);
 
-cardRoutes.delete('/:id', cardIdValidation, deleteCard);
+cardRoutes.delete('/:cardId', cardIdValidation, deleteCard);
 
 cardRoutes.put('/:cardId/likes', cardIdValidation, likeCard);
 

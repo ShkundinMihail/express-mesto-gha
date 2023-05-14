@@ -4,7 +4,7 @@ const regex = /https?:\/\/(?:[-\w]+\.)?([-\w]+)\.\w+(?:\.\w+)?\/?.*/i;
 
 const getUserIdValidation = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().required().hex().length(24),
+    _id: Joi.string().required().hex().length(24),
   }),
 });
 const editUserProfileValidation = celebrate({
