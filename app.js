@@ -11,6 +11,10 @@ const cardRoutes = require('./routes/cards');
 const { notFound } = require('./errors/errorCodes');
 const { loginUser, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
+const {
+  createUserValidation,
+  loginValidation,
+} = require('./validationJoy/validationUser');
 
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
   .then(() => { console.log('database ok'); })
@@ -18,8 +22,8 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
 
 app.use(cookieParser());
 app.use(express.json());
-app.post('/signup', createUser);
-app.post('/signin', loginUser);
+app.post('/signup', createUserValidation, createUser);
+app.post('/signin', loginValidation, loginUser);
 
 app.use('/users', auth, userRoutes);
 app.use('/cards', auth, cardRoutes);

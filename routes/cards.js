@@ -2,17 +2,23 @@ const express = require('express');
 
 const cardRoutes = express.Router();
 
-// eslint-disable-next-line object-curly-newline
-const { getCards, createCard, deleteCard, likeCard, dislikeCard } = require('../controllers/cards');
+const {
+  getCards,
+  createCard,
+  deleteCard,
+  likeCard,
+  dislikeCard,
+} = require('../controllers/cards');
+const { createCardValidation, cardIdValidation } = require('../validationJoy/validationCard');
 
 cardRoutes.get('/', getCards);
 
-cardRoutes.post('/', createCard);
+cardRoutes.post('/', createCardValidation, createCard);
 
-cardRoutes.delete('/:id', deleteCard);
+cardRoutes.delete('/:id', cardIdValidation, deleteCard);
 
-cardRoutes.put('/:cardId/likes', likeCard);
+cardRoutes.put('/:cardId/likes', cardIdValidation, likeCard);
 
-cardRoutes.delete('/:cardId/likes', dislikeCard);
+cardRoutes.delete('/:cardId/likes', cardIdValidation, dislikeCard);
 
 module.exports = cardRoutes;

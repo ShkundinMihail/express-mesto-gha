@@ -24,7 +24,7 @@ const getUserID = (req, res, next) => {
       if (!user) {
         throw new NotFound('user not found');
       } else {
-        res.send(user);
+        res.send({ user });
       }
     })
     .catch((err) => {
@@ -111,7 +111,13 @@ const createUser = (req, res, next) => {
       about,
       avatar,
     }))
-    .then((user) => res.status(statusCreated).send(user))
+    .then((user) => res.status(statusCreated).send({
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+      email: user.email,
+      _id: user._id,
+    }))
     .catch((err) => {
       if (err.code === 11000) {
         next(new Conflict('user already exists'));
@@ -135,7 +141,7 @@ const loginUser = (req, res, next) => {
   return UserSchema.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-      res.cookie('jwt', token, { maxAge: 3600000, httpOnly: true }).send({ token });
+      res.cookie('jwt', token, { maxAge: 10000000000, httpOnly: true }).send({ token });
     })
     .catch(next);
 };
