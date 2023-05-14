@@ -6,11 +6,13 @@ const app = express();
 const { PORT = 3000 } = process.env;
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
+const { errors } = require('celebrate');
 const userRoutes = require('./routes/users');
 const cardRoutes = require('./routes/cards');
-const { notFound } = require('./errors/errorCodes');
+const NotFound = require('./errors/NotFound404');
 const { loginUser, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
+const { errorsMiddleware } = require('./middlewares/errors');
 const {
   createUserValidation,
   loginValidation,
@@ -28,8 +30,8 @@ app.post('/signin', loginValidation, loginUser);
 app.use('/users', auth, userRoutes);
 app.use('/cards', auth, cardRoutes);
 
-app.use((req, res, next) => {
-  next(res.status(notFound).send({ message: 'URL not found' }));
-});
+app.use('*', (req, res, next) => { next(new NotFound('URL not found')); });
+app.use(errors());
+app.use(errorsMiddleware);
 
 app.listen(PORT, () => { console.log(`start server:${PORT}`); });
