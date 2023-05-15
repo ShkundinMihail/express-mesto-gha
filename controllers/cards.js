@@ -35,7 +35,7 @@ const deleteCard = (req, res, next) => {
       } else if (userId !== card.owner.toString()) {
         next(new Forbidden('no right to delete card'));
       } else {
-        cardSchema.deleteOne({ cardId })
+        cardSchema.findByIdAndRemove(cardId)
           .then(() => {
             res.send(card);
           })

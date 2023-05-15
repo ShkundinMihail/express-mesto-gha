@@ -9,7 +9,7 @@ const UserSchema = require('../models/User');
 const IncorrectValue = require('../errors/IncorrectValue400');
 const NotFound = require('../errors/NotFound404');
 const Conflict = require('../errors/Conflict409');
-const { statusCreated } = require('../errors/errorCodes');
+const { STATUS_CREATED_201 } = require('../errors/errorCodes');
 
 const getUsers = (req, res, next) => {
   UserSchema.find().then((users) => {
@@ -94,9 +94,6 @@ const createUser = (req, res, next) => {
   const {
     email, password, name, about, avatar,
   } = req.body;
-  if (!email || !password) {
-    throw new IncorrectValue('enter email or password');
-  }
   bcrypt.hash(password, 10)
     .then((hash) => UserSchema.create({
       email,
@@ -105,7 +102,7 @@ const createUser = (req, res, next) => {
       about,
       avatar,
     }))
-    .then((user) => res.status(statusCreated).send({
+    .then((user) => res.status(STATUS_CREATED_201).send({
       name: user.name,
       about: user.about,
       avatar: user.avatar,
