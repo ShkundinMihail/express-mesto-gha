@@ -7,10 +7,8 @@ const cardSchema = new Schema(
     name: {
       type: String,
       required: true,
-      validate: {
-        validator: ({ length }) => length >= 2 && length <= 30,
-        message: 'name must be between 2 and 30 characters',
-      },
+      minlength: 2,
+      maxlength: 30,
     },
     link: {
       type: String,

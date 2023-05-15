@@ -1,8 +1,8 @@
-const { statusErrorServer } = require('../errors/errorCodes');
+const { STATUS_ERROR_SERVER_500 } = require('../errors/errorCodes');
 
 const errorsMiddleware = (err, req, res, next) => {
-  const { statusCode = statusErrorServer, message } = err;
-  res.status(statusCode).send({ message: statusCode === statusErrorServer ? 'error Server' : message });
+  const { statusCode = STATUS_ERROR_SERVER_500, message } = err;
+  res.status(statusCode).send({ message: statusCode === STATUS_ERROR_SERVER_500 ? 'error Server' : message });
   next();
 };
 

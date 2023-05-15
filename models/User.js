@@ -8,18 +8,14 @@ const userSchema = new mongoose.Schema(
     name: {
       type: String,
       default: 'Жак-Ив Кусто',
-      validate: {
-        validator: ({ length }) => length >= 2 && length <= 30,
-        message: 'name must be between 2 and 30 characters',
-      },
+      minlength: 2,
+      maxlength: 30,
     },
     about: {
       type: String,
       default: 'Исследователь',
-      validate: {
-        validator: ({ length }) => length >= 2 && length <= 30,
-        message: 'about must be between 2 and 30 characters',
-      },
+      minlength: 2,
+      maxlength: 30,
     },
     avatar: {
       type: String,
@@ -42,10 +38,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       select: false,
-      validate: {
-        validator: ({ length }) => length >= 6,
-        message: ' password must consist of 8 or more characters',
-      },
     },
   },
 );

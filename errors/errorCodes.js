@@ -1,16 +1,16 @@
-const statusCreated = 201;
-const statusIncorrectValue = 400;
-const statusNotAuthorized = 401;
-const statusForbidden = 403;
-const statusNotFound = 404;
-const statusConflict = 409;
-const statusErrorServer = 500;
+const STATUS_CREATED_201 = 201;
+const STATUS_INCORRECT_VALUE_400 = 400;
+const STATUS_NOT_AUTHRIZED_401 = 401;
+const STATUS_FORBIDDEN_403 = 403;
+const STATUS_NOT_FOUND_404 = 404;
+const STATUS_CONFLICT_409 = 409;
+const STATUS_ERROR_SERVER_500 = 500;
 module.exports = {
-  statusCreated,
-  statusIncorrectValue,
-  statusNotAuthorized,
-  statusForbidden,
-  statusNotFound,
-  statusConflict,
-  statusErrorServer,
+  STATUS_CREATED_201,
+  STATUS_INCORRECT_VALUE_400,
+  STATUS_NOT_AUTHRIZED_401,
+  STATUS_FORBIDDEN_403,
+  STATUS_NOT_FOUND_404,
+  STATUS_CONFLICT_409,
+  STATUS_ERROR_SERVER_500,
 };

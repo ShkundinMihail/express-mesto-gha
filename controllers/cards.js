@@ -1,10 +1,10 @@
-const { ValidationError, CastError } = require('mongoose').Error;
+// const { ValidationError, CastError } = require('mongoose').Error;
 
 const cardSchema = require('../models/Card');
 const IncorrectValue = require('../errors/IncorrectValue400');
 const Forbidden = require('../errors/Forbidden403');
 const NotFound = require('../errors/NotFound404');
-const { statusCreated } = require('../errors/errorCodes');
+const { STATUS_CREATED_201 } = require('../errors/errorCodes');
 
 const getCards = (req, res, next) => {
   cardSchema.find()
@@ -16,9 +16,9 @@ const createCard = (req, res, next) => {
   const { name, link } = req.body;
   const { _id: userId } = req.user;
   cardSchema.create({ name, link, owner: userId })
-    .then((card) => { res.status(statusCreated).send({ data: card }); })
+    .then((card) => { res.status(STATUS_CREATED_201).send({ data: card }); })
     .catch((err) => {
-      if (err instanceof ValidationError) {
+      if (err.name === 'ValidationError') {
         next(new IncorrectValue('incorrect value'));
       } else {
         next(err);
@@ -32,24 +32,25 @@ const deleteCard = (req, res, next) => {
     .then((card) => {
       if (!card) {
         next(new NotFound('not found card'));
-      }
-      if (userId !== card.owner.toString()) {
+      } else if (userId !== card.owner.toString()) {
         next(new Forbidden('no right to delete card'));
+      } else {
+        cardSchema.deleteOne({ cardId })
+          .then(() => {
+            res.send(card);
+          })
+          .catch((err) => next(err));
       }
-      return cardSchema.findByIdAndRemove(cardId)
-        .then(() => {
-          res.send(card);
-        })
-        .catch((err) => next(err));
     })
     .catch((err) => {
-      if (err instanceof CastError) {
+      if (err.name === 'CastError') {
         next(new IncorrectValue('incorrect value'));
       } else {
         next(err);
       }
     });
 };
+
 const likeCard = (req, res, next) => {
   cardSchema.findByIdAndUpdate(
     req.params.cardId,
@@ -64,7 +65,7 @@ const likeCard = (req, res, next) => {
       }
     })
     .catch((err) => {
-      if (err instanceof CastError) {
+      if (err.name === 'CastError') {
         next(new IncorrectValue('incorrect value'));
       } else {
         next(err);
@@ -81,7 +82,7 @@ const dislikeCard = (req, res, next) => {
       }
     })
     .catch((err) => {
-      if (err instanceof CastError) {
+      if (err.name === 'CastError') {
         next(new IncorrectValue('incorrect value'));
       } else {
         next(err);

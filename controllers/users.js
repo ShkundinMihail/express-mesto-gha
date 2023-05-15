@@ -1,8 +1,8 @@
-const {
-  ValidationError,
-  DocumentNotFoundError,
-  CastError,
-} = require('mongoose').Error;
+// const {
+//   ValidationError,
+//   DocumentNotFoundError,
+//   CastError,
+// } = require('mongoose').Error;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const UserSchema = require('../models/User');
@@ -28,7 +28,7 @@ const getUserID = (req, res, next) => {
       }
     })
     .catch((err) => {
-      if (err instanceof CastError) {
+      if (err.name === 'CastError') {
         next(new IncorrectValue('incorrect value'));
       } else {
         next(err);
@@ -46,9 +46,6 @@ const getUserInfo = (req, res, next) => {
 const editUserProfile = (req, res, next) => {
   const { name, about } = req.body;
   const { _id: userId } = req.user;
-  if (!name || !about) {
-    throw new IncorrectValue('enter name or about');
-  }
   UserSchema.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
@@ -58,11 +55,11 @@ const editUserProfile = (req, res, next) => {
       }
     })
     .catch((err) => {
-      if (err instanceof DocumentNotFoundError) {
+      if (err.name === 'DocumentNotFoundError') {
         next(new NotFound('user not found'));
         return;
       }
-      if (err instanceof ValidationError) {
+      if (err.name === 'ValidationError') {
         next(new IncorrectValue('incorrect value'));
       } else {
         next(err);
@@ -82,11 +79,11 @@ const editUserAvatar = (req, res, next) => {
       }
     })
     .catch((err) => {
-      if (err instanceof DocumentNotFoundError) {
+      if (err.name === 'DocumentNotFoundError') {
         next(new NotFound('user not found'));
         return;
       }
-      if (err instanceof ValidationError) {
+      if (err.name === 'ValidationError') {
         next(new IncorrectValue('incorrect value'));
       } else {
         next(err);
@@ -94,9 +91,6 @@ const editUserAvatar = (req, res, next) => {
     });
 };
 const createUser = (req, res, next) => {
-  if (!req.body) {
-    throw new IncorrectValue('bad request');
-  }
   const {
     email, password, name, about, avatar,
   } = req.body;
@@ -123,7 +117,7 @@ const createUser = (req, res, next) => {
         next(new Conflict('user already exists'));
         return;
       }
-      if (err instanceof ValidationError) {
+      if (err.name === 'ValidationError') {
         next(new IncorrectValue('incorrect value'));
       } else {
         next(err);
