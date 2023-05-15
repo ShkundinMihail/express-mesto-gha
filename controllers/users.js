@@ -126,7 +126,7 @@ const loginUser = (req, res, next) => {
   return UserSchema.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-      res.cookie('jwt', token, { maxAge: 10000000000, httpOnly: true }).send('goodBoy');
+      res.cookie('jwt', token, { maxAge: 10000000000, httpOnly: true }).send({ message: 'goodBoy' });
     })
     .catch(next);
 };
